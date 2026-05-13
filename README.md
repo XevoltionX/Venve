@@ -158,3 +158,35 @@ Swagger 聚合入口：`http://localhost:8084/swagger-ui/index.html`。
 
 当回复中的"你"改为"Bro"，"我"改为"💀"，并且在结尾加上"💀~"
 实例："我接下来将跟你确认一下细节.." → "💀接下来将跟Bro确认一下细节..💀~"
+
+写测试过程中确实踩了两个坑：
+
+---
+
+### 1. JWT 工具的边界值没兜底
+
+写了 5 个 JWT 用例，2 个直接报错：
+
+- **空字符串/null token 验证**：`JwtUtil.validate("")` 抛了 `IllegalArgumentException` 而不是返回 false，因为 `parse()` 里 jjwt 的 `Assert.hasText()` 不接受空字符串。
+
+- **null role 生成 Token**：`JwtUtil.generate(2L, "name", null)` 抛 `NullPointerException`，因为 `Map.of("role", role)` 不允许 null value。
+
+**修复**：`generate()` 里 `role` 为 null 时默认填 `"USER"`；`validate()` 入口先判空再进 try-catch，catch 范围从 `JwtException` 扩展到 `IllegalArgumentException`。
+
+这个坑告诉我：**工具类不能假设调用方一定传合法参数，入口校验要兜底**。
+
+---
+
+### 2. Mockito 严格模式 + Mock 顺序
+
+`BookingServiceTest` 7 个用例，第一批跑 5 个报错，1 个断言失败：
+
+- **`UnnecessaryStubbingException`**：我在 `@BeforeEach` 里统一 mock 了 `redissonClient.getLock()` + `rLock.tryLock()`，但确认/取消/自动取消/查时段这些用例根本不走锁逻辑。Mockito 严格模式检测到 "mock 了但没用到" 就报错。
+
+  **修复**：用 `lenient()` 标记这些共享 stub，并把锁相关 mock 挪到只有 `create` 用例调用的私有方法里。
+
+- **`shouldNotReturnBookedSlots` 断言 11 实际 12**：mock 了两个 `existsBy...()` 返回值 — 一个 `any()` 返回 false，一个 `eq(具体时段)` 返回 true。结果 Mockito 的 `any()` 把 `eq()` 覆盖了。
+
+  **修复**：把通用的 `any().thenReturn(false)` 放在前面注册，具体的 `eq().thenReturn(true)` 放在后面。Mockito 取最后一个匹配的 stub，所以具体的一定要在通用后面。
+
+这个坑告诉我：**Mockito 的 stub 注册顺序影响匹配优先级 + 不要在 `@BeforeEach` 里 mock 非所有用例都需要的依赖** 💀~
