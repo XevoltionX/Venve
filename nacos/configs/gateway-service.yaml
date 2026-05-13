@@ -1,0 +1,5 @@
+server:
+  port: 8084
+
+# Gateway routes managed in local application.yml for startup safety
+# Can be migrated to Nacos for dynamic route management
