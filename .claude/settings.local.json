@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx vite *)",
+      "Bash(start *)",
+      "Bash(mvn compile *)",
+      "Bash(where nacos *)",
+      "Read(//d//**)",
+      "Read(//c//**)",
+      "Bash(curl -L -o \"D:/nacos.zip\" \"https://github.com/alibaba/nacos/releases/download/2.4.0/nacos-server-2.4.0.zip\")",
+      "Bash(curl *)",
+      "Bash(cmd //c \"startup.cmd -m standalone\")",
+      "Bash(bash startup.sh -m standalone)",
+      "Bash(mkdir -p \"D:/Program Files \\(x86\\)/IDEA/IDEAProject/venve/nacos/logs\")",
+      "Bash(./startup-native.sh -m standalone)",
+      "Bash(mysql *)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist)",
+      "Bash(wmic process *)",
+      "Bash(D:/MySQL/MySQL Server 8.0/bin/mysql *)",
+      "Bash(rm -f logs/startup.log)",
+      "Bash(nohup java -Dnacos.standalone=true -Dnacos.home=\"D:/Program Files \\(x86\\)/IDEA/IDEAProject/venve/nacos\" -Dloader.path=plugins/ -jar target/nacos-server.jar --spring.config.additional-location=file:conf/ --logging.config=conf/nacos-logback.xml --server.max-http-request-header-size=524288)",
+      "Bash(mvn -pl auth-service spring-boot:run -q)",
+      "Bash(mvn -pl venue-service spring-boot:run -q)",
+      "Bash(mvn -pl booking-service spring-boot:run -q)",
+      "Bash(mvn -pl gateway-service spring-boot:run -q)",
+      "Bash(mvn test *)"
+    ]
+  }
+}
