@@ -1,0 +1,83 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+    gateway:
+      routes:
+        - id: auth-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+        - id: venue-route
+          uri: lb://venue-service
+          predicates:
+            - Path=/api/venues/**
+        - id: booking-route
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/bookings/**,/api/notifications/**
+        - id: admin-venue-route
+          uri: lb://venue-service
+          predicates:
+            - Path=/api/admin/venues/**
+        - id: admin-booking-route
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/admin/bookings/**
+        - id: admin-user-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/admin/users/**
+        - id: auth-api-docs
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+        - id: venue-api-docs
+          uri: lb://venue-service
+          predicates:
+            - Path=/venue/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+        - id: booking-api-docs
+          uri: lb://booking-service
+          predicates:
+            - Path=/booking/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    urls:
+      - url: /auth/v3/api-docs
+        name: 认证服务
+      - url: /venue/v3/api-docs
+        name: 场馆服务
+      - url: /booking/v3/api-docs
+        name: 预约服务
