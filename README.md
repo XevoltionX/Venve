@@ -1,8 +1,4 @@
-浅尝CluadeCode通过CC-Switch接入DeepSeekV4辅助编写前端页面,后端坚持HumanCoding古法手工编程.
-# CLAUDE.md
-
-本文件为 Claude Code (claude.ai/code) 在此仓库中工作时提供指导。
-
+# README.md || 浅尝CluadeCode通过CC-Switch接入DeepSeekV4辅助编写前端页面,后端坚持HumanCoding古法手工编程.
 ## 项目概述
 
 乒乓球场馆预约系统 — Spring Cloud 微服务架构，Spring Boot 3.3.5（Java 21）+ Vue 3 前端。Redis 分布式锁防超卖，RabbitMQ 延迟队列实现超时自动取消，JWT 无状态认证。
